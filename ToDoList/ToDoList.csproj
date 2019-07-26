@@ -159,14 +159,6 @@
     <Compile Include="Models\DB\Status.cs" />
     <Compile Include="Models\DB\Task.cs" />
     <Compile Include="Models\Attributes\BeginDateMoreOrEqualDateNowAttribute.cs" />
-    <Compile Include="Models\EF\ApplicationContext.cs" />
-    <Compile Include="Models\Entities\ApplicationRole.cs" />
-    <Compile Include="Models\Entities\ApplicationUser.cs" />
-    <Compile Include="Models\Entities\ClientProfile.cs" />
-    <Compile Include="Models\Identity\ApplicationRoleManager.cs" />
-    <Compile Include="Models\Identity\ApplicationUserManager.cs" />
-    <Compile Include="Models\Interfaces\IClientManager.cs" />
-    <Compile Include="Models\Interfaces\IUnitOfWork.cs" />
     <Compile Include="Models\JsonClass.cs" />
     <Compile Include="Models\MVC\MVCStatus.cs" />
     <Compile Include="Models\Attributes\SecondDataMoreOrEqualThanFirstAttribute.cs" />
@@ -175,8 +167,6 @@
     <Compile Include="Models\MVC\MVCCategory.cs" />
     <Compile Include="Models\MVC\MVCPriority.cs" />
     <Compile Include="Models\MVC\MVCTask.cs" />
-    <Compile Include="Models\Repositories\ClientManager.cs" />
-    <Compile Include="Models\Repositories\IdentityUnitOfWork.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -302,6 +292,10 @@
   <ItemGroup>
     <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
+    <Folder Include="Models\Entities\" />
+    <Folder Include="Models\Identity\" />
+    <Folder Include="Models\Interfaces\" />
+    <Folder Include="Models\Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
