@@ -1,31 +1,342 @@
-﻿@{
+﻿@using ToDoList.Models.MVC
+@model ICollection<MVCCategory>
+@{
     ViewBag.Title = "Home Page";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
+<div id="left-content">
+    <div id="user-panel">
+        <div class="welcome">
+            <span>Welcome</span>
+            <br />
+            <span class="username">UserName</span>
+        </div>
+        <div class="logout">
+            <a href=""><img src="" alt="Logout" /></a>
+        </div>
+    </div>
+    <div id="lists-names">
+        <a href="#" id="ANC" class="button">Add New Category</a>
+        <div id="lists-container">
+            @foreach (var cat in Model)
+            {
+                <div class="list">
+                    @Ajax.ActionLink(cat.Value, "GetTasks",
+                    new { id = cat.Id },
+                    new AjaxOptions {
+                        HttpMethod = "Post",
+                        UpdateTargetId = "tasks-list",
+                        OnSuccess = "SuccessGT",
+                        OnFailure = "FailedGT"
+                    },
+                    new { @class = "catitem", id = cat.Id })
+                    <div class="remaining">@cat.TasksCount</div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+<div id="main-content">
+    <header>
+        <div class="list-name">
+            <h1>To Do List</h1>
+        </div>
+        <div class="list-actions">
+            <a href="#" id="EC" class="button">Edit Category</a>
+            <a href="#" id="DC" class="button red">Delete Category</a>
+        </div>
+    </header>
+    <div id="new-task">
+        <form method="get" action="/home/create">
+            <div id="new-task-form">
+                <div><input type="text" class="input" placeholder="Find your task..." /></div>
+                <div><input type="submit" name="addtask" class="input button" value="Add Task"></div>
+            </div>
+        </form>
+    </div>
+    <div id="tasks-list-container">
+        <ul id="tasks-list"></ul>
+        <div id="select-cat" class="div-sel-text">
+            <label id="text-select" class="text-select">Select Category</label>
+        </div>
+        <div id="tasks-list-actions">
+            @Ajax.ActionLink("Mark as Done", "DoneTask", new { tasks = "ok" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tasks-list" }, new { @class = "button", id = "Done" })
+            @Ajax.ActionLink("Mask as Done", "MaskTask", new { tasks = "ok" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tasks-list" }, new { @class = "button", id = "Mask" })
+            @Ajax.ActionLink("Delete Selected", "DeleteTask", new { tasks = "ok" }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "tasks-list" }, new { @class = "button red", id = "Delete" })
+        </div>
+    </div>
+</div>
+<div class='detail' id="Anc">
+    <div class='detail-container' id="AncContainer">
+        <input type='text' class="input input2" id='newcat' placeholder='Enter name of new task' />
+        <br />
+        @Ajax.ActionLink("Create", "CreateCategory", null, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "lists-container", OnSuccess = "SuccessCC", OnFailure = "FailedCC" }, new { @class = "button", id = "CreateC" })
+        <br />
+        <label class="" style="color: red; visibility: hidden;" id="errorcat">Category with this name is in your list!</label>
+    </div>
+    <div class='detail-nav'>
+        <button class='close button'>
+            Close
+        </button>
+    </div>
+</div>
+<div class='detail' id="Ec">
+    <div class='detail-container' id="EcContainer"></div>
+    @Ajax.ActionLink("Edit", "EditCategory", null, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "lists-container" }, new { @class = "button", id = "EditC" })
+    <br />
+    <label style="color: red; visibility: hidden;" id="erroreditcat">The list has the same category names!</label>
+    <div class='detail-nav'>
+        <button class='close button'>
+            Close
+        </button>
+    </div>
+</div>
+<div class='detail' id="Dc">
+    <div class='detail-container' id="DcContainer"></div>
+    @Ajax.ActionLink("Delete", "DeleteCategory", null, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "lists-container" }, new { @class = "button", id = "DeleteC" })
+    <div class='detail-nav'>
+        <button class='close button'>
+            Close
+        </button>
+    </div>
+</div>
+<div class='detail' id="ShowTask">
+    <div class='detail-container' id="TaskContainer"></div>
+
+    <div class='detail-nav'>
+        <button class='close button'>
+            Close
+        </button>
+    </div>
 </div>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+
+@section scripts
+{
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+    <script>
+        var moreinfo = "";
+        function SuccessGT() {
+            $("#select-cat").hide("fast");
+            $("#tasks-list").css("visibility", "visible");
+            $("#tasks-list").show("fast");
+        }
+        function FailedGT() {
+            $("#tasks-list").css("visibility", "hidden");
+            $("#tasks-list").hide("fast");
+            $("#select-cat").show("fast");
+            $("#text-select").text("The number of tasks is zero!");
+        }
+        function SuccessCC() {
+            $("#errorcat").css("visibility", "hidden");
+            $('#Anc, html, body').toggleClass('open');
+            $('#Anc').addClass('close-pos');
+        }
+        function FailedCC() {
+            $("#errorcat").css("visibility", "visible");
+        }
+        function success_moreinfo() {
+            $("#ShowTask").css("background", "#555555");
+            $("#ShowTask").css("height", "75%");
+            $("#ShowTask").css("width", "35%");
+            $('#ShowTask, html, body').toggleClass('open');
+            $('#ShowTask').addClass('close-pos');
+        }
+        $(function () {
+            var indexcat = 0;
+            var editcat = $('#EditC').attr('href');
+            var deletecat = $('#DeleteC').attr('href');
+            var createcat = $('#CreateC').attr('href');
+            $(".catitem").click(function () {
+                indexcat = $(this).attr("id");
+            });
+            $("#Done").click(function () {
+                var t = new Array();
+                $("input:checked").each(function () {
+                    t.push($(this).attr("name"));
+                });
+                console.log(t);
+                var url = encodeURI(t, 'tasks');
+                $('#Done').attr('href', function () {
+                    return this.href.replace("ok", url);
+                });
+            });
+            $("#Mask").click(function () {
+                var t = new Array();
+                $(".status").each(function () {
+                    if ($(this).text() == "To Do") {
+                        t.push($(this).next().attr("name"));
+                    }
+                });
+                var url = encodeURI(t, 'tasks');
+                $('#Mask').attr('href', function () {
+                    return this.href.replace("ok", url);
+                });
+            });
+            $("#Delete").click(function () {
+                var t = new Array();
+                $("input:checked").each(function () {
+                    t.push($(this).attr("name"));
+                });
+                var url = encodeURI(t, 'tasks');
+                $('#Delete').attr('href', function () {
+                    return this.href.replace("ok", url);
+                });
+                $(".catitem").each(function () {
+                    if ($(this).attr("id") == indexcat) {
+                        var number = +$(this).next().text();
+                        --number;
+                        $(this).next().text(number);
+                    }
+                });
+            });
+            function encodeURI(t, str) {
+                var parts = [];
+                for (var i = 0; i < t.length; ++i) {
+                    if (i == 0)
+                        parts.push(encodeURIComponent(t[i]));
+                    else
+                        parts.push(encodeURIComponent(str) + '=' + encodeURIComponent(t[i]));
+                }
+                var url = parts.join('&');
+                return url;
+            }
+
+            $('#ANC').on('click', function (e) {
+                $("#Anc").css("background", "#555555");
+                $("#Anc").css("height", "20%");
+                $('#Anc, html, body').toggleClass('open');
+                $('#Anc').addClass('close-pos');
+            });
+            $("#CreateC").click(function () {
+                $('#CreateC').attr('href', createcat + "?cat=" + $("#newcat").val());
+                $("#newcat").val("");
+            });
+            $('#Anc .close').on('click', function (e) {
+                $('#Anc, html, body').toggleClass('open');
+                $('#Anc').addClass('close-pos');
+            });
+
+            $('#EC').on('click', function (e) {
+                $("#Ec").css("background", "#555555");
+                $("#Ec").css("height", "30%");
+                $('#EcContainer').html("");
+                $(".list a").each(function () {
+                    $('#EcContainer').append($('<input/>', { id: $(this).attr("id"), 'class': 'input input2', 'type': 'text', 'value': $(this).text() }));
+                    $('#EcContainer').append("<br/>");
+                });
+                $('#Ec, html, body').toggleClass('open');
+                $('#Ec').addClass('close-pos');
+            });
+            $("#EditC").click(function () {
+                var t = new Array();
+                $("#EcContainer input").each(function () {
+                    var r = new Object();
+                    r.id = $(this).attr("id");
+                    r.name = $(this).val();
+                    t.push(r);
+                });
+                var isSame = true;
+                for (var i = 0; i < t.length; i++) {
+                    for (var j = i + 1; j < t.length; j++) {
+                        if (t[i].name == t[j].name) {
+                            isSame = false;
+                            break;
+                        }
+                    }
+                    if (isSame == false) {
+                        break;
+                    }
+                }
+                if (isSame == false) {
+                    $("#erroreditcat").css("visibility", "visible");
+                }
+                else {
+                    $("#erroreditcat").css("visibility", "hidden");
+                    var s = JSON.stringify(t);
+                    $('#EditC').attr('href', editcat + '?cat=' + s);
+                    $('#Ec, html, body').toggleClass('open');
+                    $('#Ec').addClass('close-pos');
+                }
+            });
+            $('#Ec .close').on('click', function (e) {
+                $("#erroreditcat").css("visibility", "hidden");
+                $('#Ec, html, body').toggleClass('open');
+                $('#Ec').addClass('close-pos');
+            });
+
+            $('#DC').on('click', function (e) {
+                $("#Dc").css("background", "#555555");
+                $("#Dc").css("height", "30%");
+                $('#DcContainer').html("");
+                $(".list a").each(function () {
+                    $('#DcContainer').append($('<input/>', { id: $(this).attr("id"), 'class': 'input check-status', 'type': 'checkbox' }));
+                    $('#DcContainer').append($('<input/>', { id: $(this).attr("id"), 'class': 'input input2', 'value': $(this).text() }));
+                    $('#DcContainer').append("<br/>");
+                });
+                $('#Dc, html, body').toggleClass('open');
+                $('#Dc').addClass('close-pos');
+            });
+            $("#DeleteC").click(function () {
+                var t = new Array();
+                $("#DcContainer input:checked").each(function () {
+                    t.push($(this).attr("id"));
+                });
+                var url = encodeURI(t, 'cat');
+                $('#DeleteC').attr('href', deletecat + '?cat=' + url);
+                $('#Dc, html, body').toggleClass('open');
+                $('#Dc').addClass('close-pos');
+            });
+            $('#Dc .close').on('click', function (e) {
+                $('#Dc, html, body').toggleClass('open');
+                $('#Dc').addClass('close-pos');
+            });
+
+            $('#ShowTask .close').on('click', function (e) {
+                $('#ShowTask').val("");
+                $('#ShowTask, html, body').toggleClass('open');
+                $('#ShowTask').addClass('close-pos');
+            });
+        })        
+    </script>
+}
+
+
+
+@*<!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+    .loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      margin-top: -50px;
+      margin-left: -50px;
+      border: 10px solid #dcdcdc;
+      border-radius: 50%;
+      border-top: 10px solid #3498db;
+      width: 30px;
+      height: 30px;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 1s linear infinite;
+    }
+
+    @-webkit-keyframes spin {
+      0% { -webkit-transform: rotate(0deg); }
+      100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+        </style>
+    </head>
+    <body>
+
+
+        <div class="loader" style="display:block"></div>
+
+    </body>
+    </html>*@

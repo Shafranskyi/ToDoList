@@ -1,0 +1,102 @@
+﻿@model ToDoList.Models.MVC.TaskModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@using (Html.BeginForm("Create", "Home", new { ReturnUrl = ViewBag.ReturnUrl },
+            FormMethod.Post, new { @class = "form" }))
+{
+    @Html.Label("Creating Task", new { @class = "label ma" })
+    <p class='field required'>
+        @Html.Label("Name", new { @class = "label required" })
+        <input type="text" class='input text-input' id='name' name='Name'>
+    </p>
+    <p class='field required block'>
+        @Html.Label("Start Date", new { @class = "label"})
+        @Html.LabelFor(m => m.StartDate, new { @class = "lbdate" })
+        @Html.HiddenFor(m => m.StartDate, new { @id = "hiddenStart" })
+    </p>
+    <p class='field required block'>
+        @Html.Label("End Date", new { @class = "label" })
+        @Html.LabelFor(m => m.EndDate, new { @class = "lbdate" })
+        @Html.HiddenFor(m => m.EndDate, new { @id = "hiddenEnd" })
+    </p>
+    <div id="datepicker1"></div>
+    <div id="datepicker2"></div>
+    <p class="field"></p>
+    <div class='field required'>
+        @Html.Label("Priorities", new { @class = "label" })
+        <ul class="options">
+            @for (int i = 0; i < Model.MyListPriorities.Count(); ++i)
+            {
+                <li class='option'>
+                    <input class='input option-input' id='option-@i' name='MyListPriorities' type='radio' value='@i'>
+                    <label class='option-label' for='option-@i'>@Model.MyListPriorities.ToArray()[i].Text</label>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class='field required'>
+        @Html.Label("Category", new { @class = "label" })
+        <ul class='checkboxes'>
+            @for (int i = 0; i < Model.MyListCategories.Count(); ++i)
+            {
+                <li class='checkbox'>
+                    <input class='input checkbox-input' id='choice-@i' name='MyListCategories' type='radio' value='@i'>
+                    <label class='checkbox-label' for='choice-@i'>@Model.MyListCategories.ToArray()[i].Text</label>
+                </li>
+            }
+        </ul>
+    </div>
+    <p class='field required'>
+        <label class='label' for='about'>Description</label>
+        @Html.TextAreaFor(m => m.Text, 4, 50, new { @class = "textarea" })
+    </p>
+    <p class='field half'>
+        <input class='input button' type='submit' value='Create'>
+    </p>
+}
+<div class='detail'>
+    <div class='detail-container'>
+        @Html.Label("Fix these issues!", new { @class = "errorslb" })
+        @Html.ValidationSummary()
+    </div>
+    <div class='detail-nav'>
+        <button class='close button'>
+            Close
+        </button>
+    </div>
+</div>
+
+@section scripts
+        {
+    <script>
+        $(function () {
+            $("#datepicker1").datepicker({
+                onSelect: function () {
+                    $("#hiddenStart").val($(this).datepicker('getDate').toLocaleDateString('en-GB'));
+                    $("label[for*='StartDate']").text($(this).datepicker('getDate').toLocaleDateString('en-GB'));
+                    console.log($("label[for*='StartDate']").text());
+                    console.log($("#hiddenStart").val());
+                }
+            });
+            $("#datepicker2").datepicker({
+                onSelect: function () {
+                    $("#hiddenEnd").val($(this).datepicker('getDate').toLocaleDateString('en-GB'));
+                    $("label[for*='EndDate']").text($(this).datepicker('getDate').toLocaleDateString('en-GB'));
+                    console.log($(this).datepicker('getDate').toLocaleDateString('en-GB'));
+                }
+            });
+            if ($(".detail-container li").html().length !== 0) {
+                $(".detail").css("height", "35%");
+                $('.detail, html, body').toggleClass('open');
+                $('.detail').addClass('close-pos');
+            }
+        });
+        $('.close').on('click', function (e) {
+            $('.detail, html, body').toggleClass('open');
+            $('.detail').addClass('close-pos');
+        });
+    </script>
+}

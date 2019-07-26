@@ -23,8 +23,21 @@ namespace ToDoList
                       "~/Scripts/bootstrap.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
+                      //"~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new StyleBundle("~/Content/indexcss").Include(
+                      "~/Content/Index.css"));
+
+            bundles.Add(new StyleBundle("~/Content/createcss").Include(
+                      "~/Content/Create.css"));
+
+            bundles.Add(new StyleBundle("~/Content/datepicker").Include(
+                                  "~/Content/themes/ui-darkness/jquery.ui.datepicker.css",
+                                  "~/Content/themes/ui-darkness/jquery.ui.all.css"));
+
+            bundles.Add(new ScriptBundle("~/bundles/datepicker").Include(
+                      "~/Scripts/jquery-ui-{version}.js"));
         }
     }
 }

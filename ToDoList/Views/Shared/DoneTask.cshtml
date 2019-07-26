@@ -1,0 +1,12 @@
+﻿@using ToDoList.Models.MVC
+@model ICollection<MVCTask>
+
+@foreach (var task in Model)
+{
+    <li>
+        <div class="status">@task.Status</div>
+        <input class="check-status" type="checkbox" name="@task.Id" />
+        <span>@task.Name</span>
+        <span>@task.Priority</span>
+    </li>
+}

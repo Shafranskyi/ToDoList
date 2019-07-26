@@ -1,0 +1,35 @@
+﻿@using ToDoList.Models.MVC
+@model MVCTask
+
+<table class="zui-table">
+    <tbody>
+        <tr>
+            <td><h1 class="bigh">Name:</h1></td>
+            <td>@Html.LabelForModel(Model.Name, new { @class = "label" })</td>
+        </tr>
+        <tr>
+            <td><h1 class="bigh">Status:</h1></td>
+            <td>@Html.LabelForModel(Model.Status, new { @class = "label" })</td>
+        </tr>
+        <tr>    
+            <td><h1 class="bigh">Category:</h1></td>
+            <td>@Html.LabelForModel(Model.Category, new { @class = "label" })</td>
+        </tr>
+        <tr>
+            <td><h1 class="bigh">Priority:</h1></td>
+            <td>@Html.LabelForModel(Model.Priority, new { @class = "label" })</td>
+        </tr>
+        <tr>
+            <td><h1 class="bigh">StartDate:</h1></td>
+            <td>@Html.LabelForModel(Model.StartDate, new { @class = "label" })</td>
+        </tr>
+        <tr>
+            <td><h1 class="bigh">EndDate:</h1></td>
+            <td>@Html.LabelForModel(Model.EndDate, new { @class = "label" })</td>
+        </tr>
+        <tr>
+            <td><h1 class="bigh">Text:</h1></td>
+            <td>@Html.LabelForModel(Model.Text, new { @class = "label" })</td>
+        </tr>
+    </tbody>
+</table>

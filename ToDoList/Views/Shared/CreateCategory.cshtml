@@ -1,0 +1,18 @@
+﻿@using ToDoList.Models.MVC
+@model ICollection<MVCCategory>
+
+@foreach (var cat in Model)
+{
+    <div class="list">
+        @Ajax.ActionLink(cat.Value, "GetTasks",
+        new { id = cat.Id },
+        new AjaxOptions {
+            HttpMethod = "Post",
+            UpdateTargetId = "tasks-list",
+            OnSuccess = "Success",
+            OnFailure = "Failed"
+        },
+        new { @class = "catitem", id = cat.Id })
+        <div class="remaining">@cat.TasksCount</div>
+    </div>
+}

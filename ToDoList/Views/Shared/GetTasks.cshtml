@@ -1,0 +1,13 @@
+﻿@using ToDoList.Models.MVC
+@model ICollection<MVCTask>
+
+@foreach (var task in Model)
+{
+    <li>
+        <div class="status">@task.Status</div>
+        @Ajax.ActionLink("More", "InfoTask", new { info = task.Id }, new AjaxOptions { HttpMethod = "Post", UpdateTargetId = "TaskContainer", OnSuccess = "success_moreinfo" }, new { @class = "button", id = "more"})
+        <input class="check-status" type="checkbox" name="@task.Id" />
+        <span>@task.Name</span>
+        <span>@task.Priority</span>
+    </li>
+}
