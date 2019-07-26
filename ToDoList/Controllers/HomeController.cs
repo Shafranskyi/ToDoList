@@ -14,7 +14,7 @@ namespace ToDoList.Controllers
 {
     public class HomeController : Controller
     {
-        private DoContext db = new DoContext();
+        private ApplicationContext db = new ApplicationContext();
 
         public ActionResult Index()
         {

@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.Entity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using ToDoList.Models.Entities;
 
 namespace ToDoList.Models.DB
 {
-    public class DoContext : DbContext
+    public class ApplicationContext : IdentityDbContext<ApplicationUser>
     {
-        public DoContext() 
-            : base("DBConnection")
+        public ApplicationContext() : base("DBConnection") { }
+
+        internal static ApplicationContext Create()
         {
-            Database.SetInitializer(new InitializeDB());
+            return new ApplicationContext();
         }
 
         public virtual DbSet<Task> Tasks { get; set; }

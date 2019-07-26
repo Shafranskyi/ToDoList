@@ -1,11 +1,20 @@
-﻿using System.Data.Entity;
-using System.Collections.Generic;
-
-namespace ToDoList.Models.DB
+namespace ToDoList.Migrations
 {
-    internal class InitializeDB : DropCreateDatabaseAlways<DoContext>
+    using global::ToDoList.Models.DB;
+    using System;
+    using System.Collections.Generic;
+    using System.Data.Entity;
+    using System.Data.Entity.Migrations;
+    using System.Linq;
+
+    internal sealed class Configuration : DbMigrationsConfiguration<ApplicationContext>
     {
-        protected override void Seed(DoContext context)
+        public Configuration()
+        {
+            AutomaticMigrationsEnabled = false;
+        }
+
+        protected override void Seed(ApplicationContext context)
         {
             context.Priorities.AddRange(new List<Priority> {
                 new Priority { Value = "Low" },
