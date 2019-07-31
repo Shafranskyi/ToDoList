@@ -1,53 +1,66 @@
 ﻿@model ToDoList.Models.Entities.RegisterModel
-
 @{
     ViewBag.Title = "Register";
 }
 
-<h2>Регистрация</h2>
-
-
-@using (Html.BeginForm())
+@using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl },
+            FormMethod.Post, new { @class = "form" }))
 {
     @Html.AntiForgeryToken()
-
-    <div>
-        <h4>Регистрация пользователя</h4>
-        <hr />
-        @Html.ValidationSummary(false)
-
-        <div>
-            Электронный адрес
-            <div>
-                @Html.EditorFor(model => model.Email)
-            </div>
-        </div>
-
-        <div>
-            Год рождения
-            <div>
-                @Html.EditorFor(model => model.Year)
-            </div>
-        </div>
-
-        <div>
-            Пароль
-            <div>
-                @Html.EditorFor(model => model.Password)
-            </div>
-        </div>
-
-        <div>
-            Подтвердить пароль
-            <div>
-                @Html.EditorFor(model => model.PasswordConfirm)
-            </div>
-        </div>
-
-        <div>
-            <div>
-                <input type="submit" value="Зарегистрировать" />
-            </div>
-        </div>
+    <p class='field required'>
+        @Html.Label("Email", new { @class = "label required" })
+        <input type="text" class='input text-input' id='email' name='Email'>
+    </p>
+    <p class='field required'>
+        @Html.Label("Year", new { @class = "label required" })
+        <input type="text" class='input text-input' id='year' name='Year'>
+    </p>
+    <p class='field required'>
+        @Html.Label("Password", new { @class = "label required" })
+        <input type="password" class='input text-input' id='password' name='Password'>
+        @Html.HiddenFor(model => model.Password, new { @id = "hiddenpassword" })
+    </p>
+    <p class='field required'>
+        @Html.Label("Password Confirm", new { @class = "label required" })
+        <input type="password" class='input text-input' id='passwordconfirm' name='PasswordConfirm'>
+        @Html.HiddenFor(model => model.PasswordConfirm, new { @id = "hiddenpasswordconfirm" })
+    </p>
+    <p class='field half'>
+        <input class='input button' type='submit' value='Register'>
+    </p>
+}
+<div class='detail'>
+    <div class='detail-container'>
+        @Html.Label("Fix these issues!", new { @class = "errorslb" })
+        @Html.ValidationSummary()
     </div>
+    <div class='detail-nav'>
+        <button class='button close'>
+            Close
+        </button>
+    </div>
+</div>
+
+@section scripts
+        {
+    <script>
+        $(function () {
+            $("body").addClass("row h-100 align-items-center");
+            $("#password").on("change paste keyup", function () {
+                $("#hiddenpassword").val($(this).val());
+            });
+            $("#passwordconfirm").on("change paste keyup", function () {
+                $("#hiddenpasswordconfirm").val($(this).val());
+            });
+            if ($(".detail-container li").html().length !== 0) {
+                $(".detail").css("height", "35%");
+                $('.detail, html, body').toggleClass('open');
+                $('.detail').addClass('close-pos');
+            }
+        });
+        $('.close').on('click', function (e) {
+            $('.detail, html, body').toggleClass('open');
+            $('.detail').addClass('close-pos');
+        });
+    </script>
 }

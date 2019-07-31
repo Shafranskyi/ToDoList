@@ -28,6 +28,7 @@ body, html {
     min-height: 100%;
     background-color: #111111;
     font-family: "Titillium Web", sans-serif;
+    font-size: initial;
 }
 
 body {
@@ -69,6 +70,10 @@ a {
     text-decoration: none;
     color: #fff;
 }
+
+    a:hover {
+        color: white;
+    }
 
 .input {
     font-family: "Titillium Web", sans-serif;
@@ -347,7 +352,7 @@ div#tasks-list-container div#tasks-list-actions {
 
 @media screen and (min-width: 40em) {
     body {
-        font-size: 1.25em;
+        font-size: initial;
     }
 }
 
@@ -632,6 +637,11 @@ div#tasks-list-container div#tasks-list-actions {
     -o-transition: border 0.3s linear;
     -webkit-transition: border 0.3s linear;
     transition: border 0.3s linear;
+    color: black;
+}
+
+.close:hover {
+    background-color: #fff;
 }
 
 .close-pos {

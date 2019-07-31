@@ -3,24 +3,48 @@
     ViewBag.Title = "Login";
 }
 
-<h2>Вход на сайт</h2>
-
-
-@using (Html.BeginForm())
+@using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl },
+            FormMethod.Post, new { @class = "form" }))
 {
     @Html.AntiForgeryToken()
-
-    <div>
+    <p class='field required'>
+        @Html.Label("Email", new { @class = "label required" })
+        <input type="text" class='input text-input' id='email' name='Email'>
+    </p>
+    <p class='field required'>
+        @Html.Label("Password", new { @class = "label required" })
+        <input type="password" class='input text-input' id='password' name='Password'>
+    </p>
+    <p class='field half'>
+        <input class='input button' type='submit' value='Login'>
+    </p>
+}
+<div class='detail'>
+    <div class='detail-container'>
+        @Html.Label("Fix these issues!", new { @class = "errorslb" })
         @Html.ValidationSummary()
-        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
-        <p>
-            <label>Email</label><br />
-            @Html.EditorFor(model => model.Email)
-        </p>
-        <p>
-            <label>Пароль</label><br />
-            @Html.EditorFor(model => model.Password)
-        </p>
-        <p><button type="submit">Войти</button></p>
     </div>
+    <div class='detail-nav'>
+        <button class='button close'>
+            Close
+        </button>
+    </div>
+</div>
+
+@section scripts
+        {
+    <script>
+        $(function () {
+            $("body").addClass("row h-100 align-items-center");
+            if ($(".detail-container li").html().length !== 0) {
+                $(".detail").css("height", "35%");
+                $('.detail, html, body').toggleClass('open');
+                $('.detail').addClass('close-pos');
+            }
+        });
+        $('.close').on('click', function (e) {
+            $('.detail, html, body').toggleClass('open');
+            $('.detail').addClass('close-pos');
+        });
+    </script>
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using ToDoList.Models.Attributes;
 
 namespace ToDoList.Models.Entities
 {
@@ -19,7 +20,7 @@ namespace ToDoList.Models.Entities
         public string Password { get; set; }
 
         [Required]
-        [Compare("Password", ErrorMessage = "Пароли не совпадают")]
+        [PasswordEqualPasswordConfirmed]
         [DataType(DataType.Password)]
         public string PasswordConfirm { get; set; }
     }

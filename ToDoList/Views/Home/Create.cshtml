@@ -73,6 +73,7 @@
         {
     <script>
         $(function () {
+            $("a").addClass("text-decoration-none");
             $("#datepicker1").datepicker({
                 onSelect: function () {
                     $("#hiddenStart").val($(this).datepicker('getDate').toLocaleDateString('en-GB'));
