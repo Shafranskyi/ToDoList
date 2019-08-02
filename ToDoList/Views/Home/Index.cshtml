@@ -49,7 +49,7 @@
     <div id="new-task">
         <form method="get" action="/home/create">
             <div id="new-task-form">
-                <div><input type="text" class="input" placeholder="Find your task..." /></div>
+                <div><input type="text" class="input" placeholder="Find your task..." id="findtask" /></div>
                 <div><input type="submit" name="addtask" class="input button" value="Add Task"></div>
             </div>
         </form>
@@ -102,7 +102,6 @@
 </div>
 <div class='detail' id="ShowTask">
     <div class='detail-container' id="TaskContainer"></div>
-
     <div class='detail-nav'>
         <button class='close button'>
             Close
@@ -162,6 +161,7 @@
                     return this.href.replace("ok", url);
                 });
             });
+            
             $("#Mask").click(function () {
                 var t = new Array();
                 $(".status").each(function () {
@@ -259,6 +259,34 @@
                     $('#Ec, html, body').toggleClass('open');
                     $('#Ec').addClass('close-pos');
                 }
+            });
+            $("#findtask").on("change paste keyup", function () {
+                var r = new Object();
+                r.id = indexcat.toString();
+                r.name = $(this).val();
+                var findtask = JSON.stringify(r);
+                $.post("/Home/GetFindTasks" + '?findtask=' + findtask)
+                    .done(function (data) {
+                        $("#tasks-list").empty();
+                        $("#tasks-list").append(data);
+                    })
+                    .fail(function () {
+                        $("#tasks-list").empty();
+                        console.log("loshara");
+                    })
+                    .done(function (data) {
+                        $("#tasks-list").empty();
+                        $("#select-cat").hide("fast");
+                        $("#tasks-list").css("visibility", "visible");
+                        $("#tasks-list").append(data);
+                        $("#tasks-list").show("fast");
+                    })
+                    .fail(function () {
+                        $("#tasks-list").hide("fast");
+                        $("#tasks-list").css("visibility", "hidden");
+                        $("#text-select").text("Not find tasks with this name!");
+                        $("#select-cat").show("fast");
+                    })
             });
             $('#Ec .close').on('click', function (e) {
                 $("#erroreditcat").css("visibility", "hidden");

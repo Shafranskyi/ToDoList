@@ -164,6 +164,7 @@
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Attributes\PasswordEqualPasswordConfirmed.cs" />
+    <Compile Include="Models\Extensions.cs" />
     <Compile Include="Models\Entities\ApplicationUser.cs" />
     <Compile Include="Models\Entities\Category.cs" />
     <Compile Include="Models\DB\ApplicationContext.cs" />

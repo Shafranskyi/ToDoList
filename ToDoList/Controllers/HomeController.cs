@@ -118,6 +118,30 @@ namespace ToDoList.Controllers
         }
 
         [HttpPost]
+        public ActionResult GetFindTasks(string findtask)
+        {
+            JsonClass find = new JavaScriptSerializer().Deserialize<JsonClass>(findtask);
+            int id = Int32.Parse(find.id);
+            var tasks = db.Tasks
+                .Where(t => t.Category.Id == id && t.Name.Contains(find.name))
+                .Select(task => new MVCTask
+                {
+                    Id = task.Id,
+                    Name = task.Name,
+                    Text = task.Text,
+                    Status = task.Status.Value,
+                    StartDate = task.StartDate,
+                    EndDate = task.EndDate,
+                    Category = task.Category.Value,
+                    Priority = task.Priority.Value
+                }).ToList();
+            if (tasks.Count > 0)
+                return PartialView("GetTasks", tasks);
+            else
+                return new HttpStatusCodeResult(404);
+        }
+
+        [HttpPost]
         public ActionResult DoneTask(int[] tasks)
         {
             int ID = 0;
