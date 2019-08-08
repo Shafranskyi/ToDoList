@@ -25,6 +25,7 @@ namespace ToDoList.Controllers
                 TasksCount = category.Tasks.Count
             }).ToList();
             return View(y);
+
         }
 
         public ActionResult Create()
