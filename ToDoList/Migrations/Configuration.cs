@@ -22,12 +22,6 @@ namespace ToDoList.Migrations
                 new Priority { Value = "High" }
             });
 
-            context.Categories.AddRange(new List<Category> {
-                new Category { Value = "Buy" },
-                new Category { Value = "Work" },
-                new Category { Value = "Personal" }
-            });
-
             context.Statuses.AddRange(new List<Status> {
                 new Status { Value = "To Do" },
                 new Status { Value = "Done" }

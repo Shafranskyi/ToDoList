@@ -161,7 +161,7 @@
                     return this.href.replace("ok", url);
                 });
             });
-            
+
             $("#Mask").click(function () {
                 var t = new Array();
                 $(".status").each(function () {
@@ -266,14 +266,6 @@
                 r.name = $(this).val();
                 var findtask = JSON.stringify(r);
                 $.post("/Home/GetFindTasks" + '?findtask=' + findtask)
-                    .done(function (data) {
-                        $("#tasks-list").empty();
-                        $("#tasks-list").append(data);
-                    })
-                    .fail(function () {
-                        $("#tasks-list").empty();
-                        console.log("loshara");
-                    })
                     .done(function (data) {
                         $("#tasks-list").empty();
                         $("#select-cat").hide("fast");

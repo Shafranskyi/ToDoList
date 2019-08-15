@@ -2,10 +2,13 @@
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using ToDoList.Models.DB;
 using ToDoList.Models.Entities;
 using ToDoList.Models.Identity;
 
@@ -35,6 +38,17 @@ namespace ToDoList.Controllers
                 IdentityResult result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    ApplicationUser applicationUser = UserManager.Users.First(u => u.Id == user.Id);
+
+                    using (ApplicationContext context = new ApplicationContext())
+                    {
+                        context.Categories.AddRange(new List<Category> {
+                            new Category { Value = "Buy", ApplicationUserId = applicationUser.Id },
+                            new Category { Value = "Work", ApplicationUserId = applicationUser.Id },
+                            new Category { Value = "Personal", ApplicationUserId = applicationUser.Id }
+                        });
+                        context.SaveChanges();
+                    }
                     return RedirectToAction("Login", "Account");
                 }
                 else
@@ -93,7 +107,7 @@ namespace ToDoList.Controllers
         public ActionResult Logout()
         {
             AuthenticationManager.SignOut();
-            return RedirectToAction("Login");
+            return RedirectToAction("Login", "Account");
         }
     }
 }

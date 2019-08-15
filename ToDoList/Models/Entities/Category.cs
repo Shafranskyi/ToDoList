@@ -6,6 +6,7 @@ namespace ToDoList.Models.DB
     {
         public int Id { get; set; }
         public string Value { get; set; }
+        public string ApplicationUserId { get; set; }
 
         public virtual ICollection<Task> Tasks { get; set; }
     }

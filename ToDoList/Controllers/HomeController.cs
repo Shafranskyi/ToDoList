@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity.Owin;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -8,6 +9,8 @@ using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using ToDoList.Models;
 using ToDoList.Models.DB;
+using ToDoList.Models.Entities;
+using ToDoList.Models.Identity;
 using ToDoList.Models.MVC;
 
 namespace ToDoList.Controllers
@@ -16,31 +19,45 @@ namespace ToDoList.Controllers
     {
         private ApplicationContext db = new ApplicationContext();
 
+        private ApplicationUserManager UserManager
+        {
+            get
+            {
+                return HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+        }
+
+        private ApplicationUser GetUser()
+        {
+            return UserManager.Users.First(u => u.UserName == User.Identity.Name);
+        }
+
         public ActionResult Index()
         {
-            var y = db.Categories.Select(category => new MVCCategory
+            var id = GetUser().Id;
+            var categories = db.Categories.Where(c => c.ApplicationUserId == id).Select(category => new MVCCategory
             {
                 Id = category.Id,
                 Value = category.Value,
                 TasksCount = category.Tasks.Count
             }).ToList();
-            return View(y);
-
+            return View(categories);
         }
 
         public ActionResult Create()
         {
+            var id = GetUser().Id;
             ICollection<MVCPriority> priorities = db.Priorities
                 .Select(p => new MVCPriority
                 {
                     Id = p.Id,
                     Value = p.Value
                 }).ToList();
-            ICollection<MVCCategory> categories = db.Categories
+            ICollection<MVCCategory> categories = db.Categories.Where(c => c.ApplicationUserId == id)
                 .Select(p => new MVCCategory
                 {
                     Id = p.Id,
-                    Value = p.Value
+                    Value = p.Value                    
                 }).ToList();
             return View(new TaskModel
             {
@@ -52,21 +69,18 @@ namespace ToDoList.Controllers
         [HttpPost]
         public ActionResult Create(TaskModelPost task)
         {
+            var id = GetUser().Id;
             if (ModelState.IsValid)
             {
                 int category = int.Parse(task.MyListCategories) + 1;
                 int priority = int.Parse(task.MyListPriorities) + 1;
-                Debug.WriteLine(category);
-                Debug.WriteLine(priority);
-                Debug.WriteLine(db.Categories.First(p => p.Id == category));
-                Debug.WriteLine(db.Priorities.First(p => p.Id == priority));
                 Task mytask = new Task()
                 {
                     Name = task.Name,
                     Text = task.Text,
                     StartDate = task.StartDate.ToShortDateString(),
                     EndDate = task.EndDate.ToShortDateString(),
-                    Category = db.Categories.First(p => p.Id == category),
+                    Category = db.Categories.Where(c => c.ApplicationUserId == id && c.Id == category).FirstOrDefault(),
                     Priority = db.Priorities.First(p => p.Id == priority),
                     Status = db.Statuses.First(p => p.Id == 1)
                 };
@@ -82,7 +96,7 @@ namespace ToDoList.Controllers
                 StartDate = task.StartDate,
                 EndDate = task.EndDate,
                 MVCStatus = task.Status,
-                MyListCategories = new SelectList(db.Categories.Select(p => new MVCPriority
+                MyListCategories = new SelectList(db.Categories.Where(c => c.ApplicationUserId == id).Select(p => new MVCPriority
                 {
                     Id = p.Id,
                     Value = p.Value
@@ -99,6 +113,7 @@ namespace ToDoList.Controllers
         [HttpPost]
         public ActionResult GetTasks(int id)
         {
+            var i = id;
             var tasks = db.Tasks
                 .Where(t => t.Category.Id == id)
                 .Select(task => new MVCTask
@@ -215,12 +230,13 @@ namespace ToDoList.Controllers
         [HttpPost]
         public ActionResult CreateCategory(string cat)
         {
-            ICollection<string> CatNames = db.Categories.Select(p => p.Value).ToList();
+            ICollection<string> CatNames = GetUser().Categories.Select(p => p.Value).ToList();
             if (!CatNames.Contains(cat))
             {
-                db.Categories.Add(new Category { Value = cat });
+                db.Categories.Add(new Category { Value = cat, ApplicationUserId = GetUser().Id });
                 db.SaveChanges();
-                return PartialView("CreateCategory", db.Categories.Select(category => new MVCCategory
+                var id = GetUser().Id;
+                return PartialView("CreateCategory", db.Categories.Where(c => c.ApplicationUserId == id).Select(category => new MVCCategory
                 {
                     Id = category.Id,
                     Value = category.Value,
@@ -229,23 +245,24 @@ namespace ToDoList.Controllers
             }
             return new HttpStatusCodeResult(403);
         }
-        
+
         [HttpPost]
         public ActionResult EditCategory(string cat)
         {
+            var jsons = new JavaScriptSerializer().Deserialize<ICollection<JsonClass>>(cat).ToArray();
             int count = 0;
-            ICollection<JsonClass> objects = new JavaScriptSerializer().Deserialize<ICollection<JsonClass>>(cat);
-            var cats = db.Categories.ToList();
-            foreach (var item in cats)
+            foreach (var item in GetUser().Categories.ToList())
             {
-                if (int.Parse(objects.ToArray()[count].id) == item.Id && objects.ToArray()[count].name != item.Value)
+                if (item.Id == Int32.Parse(jsons[count].id) && item.Value != jsons[count].name)
                 {
-                    db.Categories.ToArray()[count].Value = objects.ToArray()[count].name;
+                    db.Categories.Where(i => i.Id == item.Id).Single().Value = jsons[count].name;
+                    item.Value = jsons[count].name;
                 }
                 ++count;
             }
             db.SaveChanges();
-            return PartialView("EditCategory", db.Categories.Select(category => new MVCCategory
+            var id = GetUser().Id;
+            return PartialView("EditCategory", db.Categories.Where(c => c.ApplicationUserId == id).Select(category => new MVCCategory
             {
                 Id = category.Id,
                 Value = category.Value,
@@ -261,7 +278,8 @@ namespace ToDoList.Controllers
                 db.Categories.Remove(item);
             }
             db.SaveChanges();
-            return PartialView("DeleteCategory", db.Categories.Select(category => new MVCCategory
+            var id = GetUser().Id;
+            return PartialView("DeleteCategory", db.Categories.Where(c => c.ApplicationUserId == id).Select(category => new MVCCategory
             {
                 Id = category.Id,
                 Value = category.Value,
